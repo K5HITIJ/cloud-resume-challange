@@ -5,6 +5,12 @@ from moto import mock_dynamodb
 import os
 import sys
 
+# Set AWS environment variables for testing
+os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+os.environ['AWS_ACCESS_KEY_ID'] = 'testing'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'testing'
+os.environ['DYNAMODB_TABLE'] = 'test-visitor-counter'
+
 # Add the backend directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 

@@ -38,10 +38,18 @@ jobs:
       - name: Run unit tests
         run: |
           pytest tests/unit/ -v
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: testing
+          AWS_SECRET_ACCESS_KEY: testing
       
       - name: Run Lambda function tests
         run: |
           pytest tests/test_app.py -v
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: testing
+          AWS_SECRET_ACCESS_KEY: testing
 
   deploy-staging:
     runs-on: ubuntu-latest
