@@ -1,6 +1,20 @@
-# Cloud Resume Challenge
+# Cloud Resume Challenge - DevOps Edition
 
-A cloud-based resume website with a visitor counter, built using AWS serverless technologies.
+A cloud-based resume website with a visitor counter, built using AWS serverless technologies and featuring a **professional CI/CD pipeline** that demonstrates advanced DevOps practices.
+
+## 🚀 Live Demo
+- **Website**: https://dlwihg4xkk5ga.cloudfront.net
+- **Repository**: https://github.com/K5HITIJ/cloud-resume-challange
+
+## ⚡ CI/CD Pipeline Features
+This project showcases enterprise-level DevOps practices:
+- ✅ **Multi-environment deployment** (staging → production)
+- ✅ **Automated testing suite** (unit + integration tests)
+- ✅ **Code quality gates** (linting with flake8)
+- ✅ **Performance monitoring** (load time validation)
+- ✅ **Security testing** (SSL/HTTPS verification)
+- ✅ **Automated cache invalidation** (CloudFront)
+- ✅ **Environment protection** (manual approval for production)
 
 ## Architecture
 
