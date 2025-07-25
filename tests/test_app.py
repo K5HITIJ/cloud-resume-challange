@@ -1,9 +1,9 @@
 import json
 import pytest
 import boto3
-from moto import mock_dynamodb
 import os
 import sys
+from unittest.mock import patch, MagicMock
 
 # Set AWS environment variables for testing
 os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
@@ -16,49 +16,55 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
 from app import lambda_handler, get_visitor_count, increment_visitor_count
 
-@mock_dynamodb
 class TestVisitorCounter:
     
-    def setup_method(self):
+    @patch('boto3.resource')
+    def setup_method(self, mock_boto3):
         """Set up test fixtures before each test method."""
         # Set environment variable
         os.environ['DYNAMODB_TABLE'] = 'test-visitor-counter'
         
-        # Create mock DynamoDB table
-        self.dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-        self.table = self.dynamodb.create_table(
-            TableName='test-visitor-counter',
-            KeySchema=[
-                {
-                    'AttributeName': 'id',
-                    'KeyType': 'HASH'
-                }
-            ],
-            AttributeDefinitions=[
-                {
-                    'AttributeName': 'id',
-                    'AttributeType': 'S'
-                }
-            ],
-            BillingMode='PAY_PER_REQUEST'
-        )
+        # Mock DynamoDB table
+        self.mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = self.mock_table
         
-        # Recreate the app's table reference with the mock
-        import app
-        app.table = self.table
+        # Set up default return values
+        self.mock_table.get_item.return_value = {}
+        self.mock_table.update_item.return_value = {'Attributes': {'count': 1}}
 
-    def test_get_visitor_count_new_table(self):
+    @patch('boto3.resource')
+    def test_get_visitor_count_new_table(self, mock_boto3):
         """Test getting visitor count when no record exists."""
+        # Mock table response for no existing record
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.get_item.return_value = {}
+        
         count = get_visitor_count()
         assert count == 0
 
-    def test_increment_visitor_count_new_table(self):
+    @patch('boto3.resource')
+    def test_increment_visitor_count_new_table(self, mock_boto3):
         """Test incrementing visitor count when no record exists."""
+        # Mock table response
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.update_item.return_value = {'Attributes': {'count': 1}}
+        
         count = increment_visitor_count()
         assert count == 1
 
-    def test_increment_visitor_count_existing_record(self):
+    @patch('boto3.resource')
+    def test_increment_visitor_count_existing_record(self, mock_boto3):
         """Test incrementing visitor count when record exists."""
+        # Mock table response
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.update_item.side_effect = [
+            {'Attributes': {'count': 1}},
+            {'Attributes': {'count': 2}}
+        ]
+        
         # First increment
         count1 = increment_visitor_count()
         assert count1 == 1
@@ -67,8 +73,14 @@ class TestVisitorCounter:
         count2 = increment_visitor_count()
         assert count2 == 2
 
-    def test_lambda_handler_get_method(self):
+    @patch('boto3.resource')
+    def test_lambda_handler_get_method(self, mock_boto3):
         """Test Lambda handler with GET method."""
+        # Mock table response
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.get_item.return_value = {}
+        
         event = {
             'httpMethod': 'GET'
         }
@@ -80,8 +92,14 @@ class TestVisitorCounter:
         assert 'count' in body
         assert body['count'] == 0
 
-    def test_lambda_handler_post_method(self):
+    @patch('boto3.resource')
+    def test_lambda_handler_post_method(self, mock_boto3):
         """Test Lambda handler with POST method."""
+        # Mock table response
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.update_item.return_value = {'Attributes': {'count': 1}}
+        
         event = {
             'httpMethod': 'POST'
         }
@@ -105,7 +123,8 @@ class TestVisitorCounter:
         assert 'Access-Control-Allow-Origin' in response['headers']
         assert response['headers']['Access-Control-Allow-Origin'] == '*'
 
-    def test_lambda_handler_invalid_method(self):
+    @patch('boto3.resource')
+    def test_lambda_handler_invalid_method(self, mock_boto3):
         """Test Lambda handler with invalid HTTP method."""
         event = {
             'httpMethod': 'DELETE'
@@ -117,8 +136,14 @@ class TestVisitorCounter:
         body = json.loads(response['body'])
         assert 'error' in body
 
-    def test_cors_headers_present(self):
+    @patch('boto3.resource')
+    def test_cors_headers_present(self, mock_boto3):
         """Test that CORS headers are present in response."""
+        # Mock table response
+        mock_table = MagicMock()
+        mock_boto3.return_value.Table.return_value = mock_table
+        mock_table.get_item.return_value = {}
+        
         event = {
             'httpMethod': 'GET'
         }
