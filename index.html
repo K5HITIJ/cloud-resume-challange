@@ -1,233 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume - Kshitij Mishra</title>
+    <title>My Resume</title>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f8f8;
-            display: flex;
-            justify-content: center;
-            padding: 20px 0;
-        }
-
-        .container {
-            background-color: white;
-            width: 21cm;
-            padding: 2cm;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-            font-size: 11pt;
-            color: #333;
-            line-height: 1.5;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 1.5cm;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            color: #222;
-            margin: 0.2em 0;
-            font-weight: 500;
-        }
-
-        .header p {
-            margin: 0.5em 0;
-            color: #555;
-            font-size: 1em; /* Increased font size for better emphasis */
-        }
-
-        .header p a {
-            color: #0077cc;
-            text-decoration: none;
-        }
-
-        .header p a:hover {
-            text-decoration: underline;
-        }
-
-        .summary {
-            margin-bottom: 1.5cm;
-            text-align: center;
-            font-size: 1em;
-            color: #444;
-            line-height: 1.5;
-        }
-
-        .content {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .column {
-            width: 48%;
-            margin-right: 2%;
-            padding: 0 1cm; /* Added padding inside columns */
-            border-right: 1px solid #e0e0e0; /* Added subtle border between columns */
-        }
-
-        .column:last-child {
-            margin-right: 0;
-            border-right: none; /* Removed border for the last column */
-        }
-
-        .section {
-            margin-bottom: 1.2cm;
-        }
-
-        .section-title {
-            font-size: 1.3em;
-            color: #0056b3;
-            border-bottom: 2px solid #0056b3;
-            padding-bottom: 0.2em;
-            margin-bottom: 0.5em;
-            font-weight: 600;
-            background-color: #f0f8ff; /* Added background color to highlight section titles */
-            padding: 0.2em 0.5em;
-        }
-
-        h3 {
-            font-size: 1.1em;
-            color: #444;
-            font-style: italic;
-            margin-bottom: 0.2em;
-            font-weight: normal;
-        }
-
-        h3 span {
-            font-weight: 600;
-            color: #333;
-        }
-
-        p, ul {
-            font-size: 1em;
-            color: #444;
-            margin-bottom: 0.5em;
-        }
-
-        ul {
-            list-style: disc;
-            margin-left: 20px;
-        }
-
-        li {
-            margin-bottom: 0.3em;
-        }
-
-        .underline {
-            text-decoration: underline;
-        }
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .counter { position: fixed; bottom: 20px; right: 20px; background: #007acc; color: white; padding: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Kshitij Mishra</h1>
-            <p>
-                <a href="mailto:Kshitijbin@gmail.com">Kshitijbin@gmail.com</a> |
-                <a href="http://www.linkedin.com/in/kshitij-mishra" target="_blank">LinkedIn Profile</a> |
-                +918299637209
-            </p>
-        </div>
-
-        <div class="summary">
-            <p>
-                Results-driven C++ Developer with a solid foundation in application development and 3+ years of hands-on experience. Expertise in C++17, STL, and OOP. Proven ability to enhance application performance, design new modules, and ensure robust platform stability.  Seeking to leverage my skills and experience to contribute to innovative projects and drive technological advancement.
-            </p>
-        </div>
-
-        <div class="content">
-            <div class="column">
-                <div class="section">
-                    <h2 class="section-title">Experience</h2>
-
-                    <h3><span class="underline">Assignment I</span> - C++ Developer</h3>
-                    <p>TATA CONSULTANCY SERVICES LIMITED (Jan 20 - Mar 21)</p>
-                    <ul>
-                        <li>Monitored the C++ backend engine for the XRE product.</li>
-                        <li>Planned migration of products to virtual machines.</li>
-                        <li>Set up and upgraded virtual machines.</li>
-                    </ul>
-
-                    <h3><span class="underline">Assignment II</span> - C++ Developer</h3>
-                    <p>TATA CONSULTANCY SERVICES LIMITED (Apr 21 - Sep 22)</p>
-                    <ul>
-                        <li>Designed and implemented new features and fixed bugs in the C++ backend engine for the billing product.</li>
-                        <li>Developed and enhanced the C++ product for new CPU architectures.</li>
-                    </ul>
-
-                    <h3><span class="underline">Assignment III</span> - Full Stack Developer</h3>
-                    <p>AUTODESK INDIA PVT LTD (Sep 22 - Dec 22)</p>
-                    <ul>
-                        <li>Maintained and enhanced the delivery platform.</li>
-                    </ul>
-
-                    <h3><span class="underline">Assignment IV</span> - DevOps Engineer</h3>
-                    <p>AUTODESK INDIA PVT LTD (Jan 23 - Present)</p>
-                    <ul>
-                        <li>Improved CI/CD processes in Jenkins.</li>
-                        <li>Developed and monitored observability dashboards.</li>
-                        <li>Resolved Git-related issues.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="column">
-                <div class="section">
-                    <h2 class="section-title">Education</h2>
-                    <ul>
-                        <li><strong>B.Tech in Computer Science & Engineering</strong> - Allenhouse Institute of Technology (Apr 15 - Apr 19)</li>
-                        <li><strong>10 + 2</strong> - K.R. Education Center (Apr 13 - Apr 15)</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">Skills</h2>
-                    <ul>
-                        <li><strong>Programming Languages:</strong> C/C++ 17</li>
-                        <li><strong>Debugging Tool:</strong> GDB</li>
-                        <li><strong>Cloud Platform:</strong> AWS</li>
-                        <li><strong>CI/CD:</strong> Jenkins</li>
-                        <li><strong>Version Control System:</strong> Git</li>
-                        <li><strong>Operating Systems:</strong> Linux, Windows</li>
-                        <li><strong>Core Skills:</strong> OOPs, DSA</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">Certifications</h2>
-                    <ul>
-                        <li>Certified C++ developer E1, E0 Competent.</li>
-                        <li>Linux internals E1 Competent</li>
-                        <li>SQL essential training.</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">Achievements & Awards</h2>
-                    <ul>
-                        <li>Recognized and received multiple recognition points for outstanding performance.</li>
-                        <li>Organized and won inter-college competitions as part of the CS committee head.</li>
-                        <li>Won gold and bronze medals in Tae-Kwon-do in inter-city matches.</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">Hobbies & Interests</h2>
-                    <ul>
-                        <li>Travelling</li>
-                        <li>Trading & investing</li>
-                        <li>TV series & animes</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <h1>Kshitij Mishra</h1>
+    <p>DevOps Engineer</p>
+    <p>Email: itskshitijmishra@gmail.com | +918299637209</p>
+    
+    <h2>Experience</h2>
+    <p><strong>DevOps Engineer</strong> - Autodesk India (Sep 2022 - Present)<br>
+    • Improved CI/CD processes in Jenkins by 15-20%<br>
+    • Developed observability dashboards with Prometheus/Grafana<br>
+    • Support engineering teams across APAC region</p>
+    
+    <h2>Skills</h2>
+    <p>AWS, Jenkins, CI/CD, Python, Prometheus/Grafana, SonarQube, Git</p>
+    
+    <div class="counter">
+        Visitors: <span id="count">0</span>
     </div>
+    
+    <script>
+        // Get visitor count
+        fetch('API_URL_PLACEHOLDER')
+            .then(r => r.json())
+            .then(data => document.getElementById('count').textContent = data.count);
+        
+        // Increment count
+        fetch('API_URL_PLACEHOLDER', {method: 'POST'})
+            .then(r => r.json())
+            .then(data => document.getElementById('count').textContent = data.count);
+    </script>
 </body>
 </html>

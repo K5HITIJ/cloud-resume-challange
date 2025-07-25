@@ -1,154 +1,64 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Cloud Resume Challenge - Serverless backend for visitor counter
-
-Globals:
-  Function:
-    Timeout: 10
-    Runtime: python3.9
-    Environment:
-      Variables:
-        DYNAMODB_TABLE: !Ref VisitorCounterTable
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: Name for the S3 bucket to host the static website
-    Default: cloud-resume-challenge-bucket
 
 Resources:
-  # DynamoDB Table for visitor counter
-  VisitorCounterTable:
+  # S3 Bucket for website
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  # Bucket policy for public read
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${WebsiteBucket}/*'
+
+  # Lambda function for visitor counter
+  VisitorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /count
+            Method: ANY
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref VisitorTable
+
+  # DynamoDB table
+  VisitorTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: visitor-counter
-      BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-
-  # Lambda function for visitor counter
-  VisitorCounterFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: backend/
-      Handler: app.lambda_handler
-      Runtime: python3.9
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref VisitorCounterTable
-      Events:
-        GetVisitorCount:
-          Type: Api
-          Properties:
-            Path: /visitor-count
-            Method: get
-            RestApiId: !Ref VisitorCounterApi
-        IncrementVisitorCount:
-          Type: Api
-          Properties:
-            Path: /visitor-count
-            Method: post
-            RestApiId: !Ref VisitorCounterApi
-        OptionsVisitorCount:
-          Type: Api
-          Properties:
-            Path: /visitor-count
-            Method: options
-            RestApiId: !Ref VisitorCounterApi
-
-  # API Gateway
-  VisitorCounterApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Cors:
-        AllowMethods: "'GET,POST,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-
-  # S3 Bucket for static website hosting
-  WebsiteBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${BucketName}-${AWS::AccountId}"
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-
-  # CloudFront Distribution
-  CloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Origins:
-          - DomainName: !GetAtt WebsiteBucket.RegionalDomainName
-            Id: S3Origin
-            CustomOriginConfig:
-              HTTPPort: 80
-              HTTPSPort: 443
-              OriginProtocolPolicy: http-only
-        Enabled: true
-        DefaultRootObject: index.html
-        Comment: CloudFront Distribution for Cloud Resume Challenge
-        DefaultCacheBehavior:
-          TargetOriginId: S3Origin
-          ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods:
-            - GET
-            - HEAD
-          CachedMethods:
-            - GET
-            - HEAD
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-          Compress: true
-        PriceClass: PriceClass_100
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+      BillingMode: PAY_PER_REQUEST
 
 Outputs:
-  # API Gateway endpoint URL
-  VisitorCounterApiUrl:
-    Description: "API Gateway endpoint URL for visitor counter"
-    Value: !Sub "https://${VisitorCounterApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/visitor-count"
-    Export:
-      Name: !Sub "${AWS::StackName}-ApiUrl"
-
-  # S3 Website URL
-  WebsiteURL:
-    Description: URL for website hosted on S3
-    Value: !GetAtt WebsiteBucket.WebsiteURL
-    Export:
-      Name: !Sub "${AWS::StackName}-WebsiteURL"
-
-  # CloudFront Distribution URL
-  CloudFrontURL:
-    Description: CloudFront Distribution URL
-    Value: !Sub "https://${CloudFrontDistribution.DomainName}"
-    Export:
-      Name: !Sub "${AWS::StackName}-CloudFrontURL"
-
-  # S3 Bucket Name
-  BucketName:
-    Description: Name of the S3 bucket
+  WebsiteBucket:
     Value: !Ref WebsiteBucket
-    Export:
-      Name: !Sub "${AWS::StackName}-BucketName"
-
-  # DynamoDB Table Name
-  DynamoDBTableName:
-    Description: Name of the DynamoDB table
-    Value: !Ref VisitorCounterTable
-    Export:
-      Name: !Sub "${AWS::StackName}-DynamoDBTable"
+  WebsiteURL:
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+  ApiURL:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/count"

@@ -1,104 +1,33 @@
-# Cloud Resume Challenge - DevOps Edition
+# Cloud Resume Challenge - Ultra Simple
 
-A cloud-based resume website with a visitor counter, built using AWS serverless technologies and featuring a **professional CI/CD pipeline** that demonstrates advanced DevOps practices.
+A serverless resume website with visitor counter. **Perfect for demos!**
 
-## 🚀 Live Demo
-- **Website**: https://dlwihg4xkk5ga.cloudfront.net
-- **Repository**: https://github.com/K5HITIJ/cloud-resume-challange
+## 🏗️ Architecture
+- **Frontend**: S3 static website
+- **Backend**: Lambda function
+- **Database**: DynamoDB
+- **CI/CD**: GitHub Actions
 
-## ⚡ CI/CD Pipeline Features
-This project showcases enterprise-level DevOps practices:
-- ✅ **Multi-environment deployment** (staging → production)
-- ✅ **Automated testing suite** (unit + integration tests)
-- ✅ **Code quality gates** (linting with flake8)
-- ✅ **Performance monitoring** (load time validation)
-- ✅ **Security testing** (SSL/HTTPS verification)
-- ✅ **Automated cache invalidation** (CloudFront)
-- ✅ **Environment protection** (manual approval for production)
+## 🚀 Deploy in 2 minutes
+1. Fork this repo
+2. Add AWS secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+3. Push to main branch
+4. Done! ✅
 
-## Architecture
-
-This project implements the Cloud Resume Challenge using the following AWS services:
-
-- **Frontend**: Static website hosted on Amazon S3 with CloudFront CDN
-- **Backend**: Serverless API using AWS Lambda and API Gateway
-- **Database**: DynamoDB for storing visitor count
-- **Infrastructure**: AWS SAM (Serverless Application Model) for Infrastructure as Code
-
-## Project Structure
-
+## 📁 Project Structure (4 files total!)
 ```
-├── frontend/               # Static website files
-│   ├── index.html         # Your resume HTML (empty - ready for your content)
-│   ├── style.css          # Styling for the resume
-│   └── script.js          # JavaScript for visitor counter
-├── backend/               # Lambda function code
-│   ├── app.py            # Main Lambda function
-│   └── requirements.txt   # Python dependencies
-├── infrastructure/        # AWS infrastructure
-│   └── template.yaml     # SAM template
-├── tests/                # Unit tests
-│   └── test_app.py       # Lambda function tests
-└── README.md             # This file
+├── .github/workflows/deploy.yml    # CI/CD (25 lines)
+├── template.yaml                   # Infrastructure (35 lines)
+├── lambda_function.py              # Backend (15 lines)
+├── index.html                      # Frontend (25 lines)
+└── README.md                       # This file
 ```
 
-## Prerequisites
+## ✨ Demo Script for Interviews
+1. "This is a serverless resume with real-time visitor tracking"
+2. "GitHub Actions automatically deploys to AWS when I push code"
+3. "Infrastructure is defined as code using CloudFormation"
+4. "The visitor counter uses Lambda and DynamoDB"
+5. "Total: 4 files, 100 lines of code, full CI/CD pipeline"
 
-- AWS CLI installed and configured
-- AWS SAM CLI installed
-- Python 3.9+
-- Node.js (for local testing)
-
-## Deployment
-
-1. **Build the SAM application:**
-   ```bash
-   sam build
-   ```
-
-2. **Deploy the infrastructure:**
-   ```bash
-   sam deploy --guided
-   ```
-
-3. **Upload frontend files to S3:**
-   ```bash
-   aws s3 sync frontend/ s3://your-bucket-name
-   ```
-
-## Local Development
-
-1. **Start the SAM local API:**
-   ```bash
-   sam local start-api
-   ```
-
-2. **Run tests:**
-   ```bash
-   python -m pytest tests/
-   ```
-
-## Features
-
-- ✅ Static resume website
-- ✅ Visitor counter with real-time updates
-- ✅ HTTPS enabled via CloudFront
-- ✅ Serverless backend
-- ✅ Infrastructure as Code
-- ✅ Unit tests
-- ✅ CI/CD ready
-
-## Next Steps
-
-1. Add your resume content to `frontend/index.html`
-2. Customize the styling in `frontend/style.css`
-3. Deploy the application using the commands above
-4. Set up a custom domain (optional)
-5. Implement CI/CD pipeline (optional)
-
-## Security
-
-- API Gateway configured with CORS
-- DynamoDB with least privilege access
-- CloudFront with security headers
-- S3 bucket with public read-only access for website hosting
+Perfect for showcasing cloud and DevOps skills! 🎯
