@@ -29,14 +29,21 @@ jobs:
       
       - name: Configure AWS CLI
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region us-east-1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       
       - name: Test AWS Connection
         run: |
           echo "Testing AWS connection..."
           aws sts get-caller-identity
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
       
       - name: Deploy Infrastructure
         run: |
@@ -63,26 +70,7 @@ jobs:
           # Show result
           URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" --output text)
           echo "✅ Website deployed: $URL"
-      
-      - name: Deploy
-        run: |
-          # Deploy infrastructure
-          aws cloudformation deploy \
-            --template-file template.yaml \
-            --stack-name resume \
-            --capabilities CAPABILITY_IAM
-          
-          # Get outputs
-          BUCKET=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteBucket'].OutputValue" --output text)
-          API_URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='ApiURL'].OutputValue" --output text)
-          
-          # Update HTML with API URL
-          sed "s|API_URL_PLACEHOLDER|$API_URL|g" index.html > /tmp/index.html
-          cp /tmp/index.html index.html
-          
-          # Upload website
-          aws s3 sync . s3://$BUCKET --exclude "*" --include "*.html" --include "*.css" --include "*.js"
-          
-          # Show result
-          URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" --output text)
-          echo "✅ Website deployed: $URL"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
