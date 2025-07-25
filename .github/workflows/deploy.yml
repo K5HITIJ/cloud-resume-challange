@@ -12,13 +12,19 @@ jobs:
       
       - name: Debug Secrets
         run: |
-          echo "Checking repository secret access..."
-          echo "Available secrets context:"
-          echo "secrets.AWS_ACCESS_KEY_ID exists: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
-          echo "secrets.AWS_SECRET_ACCESS_KEY exists: ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
+          echo "=== SECRET DEBUGGING ==="
           echo "Repository: ${{ github.repository }}"
           echo "Branch: ${{ github.ref }}"
           echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo ""
+          echo "Testing direct secret access:"
+          echo "AWS_ACCESS_KEY_ID direct: '${{ secrets.AWS_ACCESS_KEY_ID }}'"
+          echo "AWS_SECRET_ACCESS_KEY direct: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
+          echo ""
+          echo "Testing secret existence:"
+          echo "AWS_ACCESS_KEY_ID exists: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
+          echo "AWS_SECRET_ACCESS_KEY exists: ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
       
       - name: Configure AWS CLI
         run: |
