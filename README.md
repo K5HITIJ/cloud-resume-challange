@@ -31,3 +31,4 @@ A serverless resume website with visitor counter. **Perfect for demos!**
 5. "Total: 4 files, 100 lines of code, full CI/CD pipeline"
 
 Perfect for showcasing cloud and DevOps skills! 🎯
+
