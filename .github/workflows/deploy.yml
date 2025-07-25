@@ -10,17 +10,59 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Configure AWS
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      
-      - name: Verify AWS Configuration
+      - name: Debug Secrets
         run: |
-          echo "Testing AWS credentials..."
+          echo "Checking if secrets exist..."
+          if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            echo "AWS_ACCESS_KEY_ID found (length: ${#AWS_ACCESS_KEY_ID})"
+          else
+            echo "AWS_ACCESS_KEY_ID not found"
+          fi
+          if [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            echo "AWS_SECRET_ACCESS_KEY found (length: ${#AWS_SECRET_ACCESS_KEY})"
+          else
+            echo "AWS_SECRET_ACCESS_KEY not found"
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+      - name: Configure AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
+      
+      - name: Test AWS Connection
+        run: |
+          echo "Testing AWS connection..."
           aws sts get-caller-identity
+      
+      - name: Deploy Infrastructure
+        run: |
+          echo "Deploying CloudFormation stack..."
+          aws cloudformation deploy \
+            --template-file template.yaml \
+            --stack-name resume \
+            --capabilities CAPABILITY_IAM
+          
+          echo "Getting stack outputs..."
+          BUCKET=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteBucket'].OutputValue" --output text)
+          API_URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='ApiURL'].OutputValue" --output text)
+          
+          echo "S3 Bucket: $BUCKET"
+          echo "API URL: $API_URL"
+          
+          # Update HTML with API URL
+          sed "s|API_URL_PLACEHOLDER|$API_URL|g" index.html > /tmp/index.html
+          cp /tmp/index.html index.html
+          
+          # Upload website
+          aws s3 sync . s3://$BUCKET --exclude "*" --include "*.html" --include "*.css" --include "*.js"
+          
+          # Show result
+          URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" --output text)
+          echo "✅ Website deployed: $URL"
       
       - name: Deploy
         run: |
