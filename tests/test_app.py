@@ -18,19 +18,10 @@ from app import lambda_handler, get_visitor_count, increment_visitor_count
 
 class TestVisitorCounter:
     
-    @patch('boto3.resource')
-    def setup_method(self, mock_boto3):
+    def setup_method(self):
         """Set up test fixtures before each test method."""
         # Set environment variable
         os.environ['DYNAMODB_TABLE'] = 'test-visitor-counter'
-        
-        # Mock DynamoDB table
-        self.mock_table = MagicMock()
-        mock_boto3.return_value.Table.return_value = self.mock_table
-        
-        # Set up default return values
-        self.mock_table.get_item.return_value = {}
-        self.mock_table.update_item.return_value = {'Attributes': {'count': 1}}
 
     @patch('boto3.resource')
     def test_get_visitor_count_new_table(self, mock_boto3):
