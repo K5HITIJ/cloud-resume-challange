@@ -17,11 +17,14 @@ Resources:
   # Bucket policy for public read
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
+    DependsOn: WebsiteBucket
     Properties:
       Bucket: !Ref WebsiteBucket
       PolicyDocument:
+        Version: '2012-10-17'
         Statement:
-          - Effect: Allow
+          - Sid: PublicReadGetObject
+            Effect: Allow
             Principal: '*'
             Action: s3:GetObject
             Resource: !Sub '${WebsiteBucket}/*'
@@ -33,6 +36,9 @@ Resources:
       CodeUri: .
       Handler: lambda_function.lambda_handler
       Runtime: python3.9
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VisitorTable
       Events:
         Api:
           Type: Api
