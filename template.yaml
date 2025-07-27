@@ -13,21 +13,9 @@ Resources:
         RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
-
-  # Bucket policy for public read
-  WebsiteBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    DependsOn: WebsiteBucket
-    Properties:
-      Bucket: !Ref WebsiteBucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: PublicReadGetObject
-            Effect: Allow
-            Principal: '*'
-            Action: s3:GetObject
-            Resource: !Sub '${WebsiteBucket}/*'
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
 
   # Lambda function for visitor counter
   VisitorFunction:

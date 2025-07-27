@@ -44,6 +44,32 @@ jobs:
           sam build
           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name cloud-resume --capabilities CAPABILITY_IAM --region us-east-1 --resolve-s3
       
+      - name: Apply S3 Bucket Policy
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name cloud-resume \
+            --query "Stacks[0].Outputs[?OutputKey=='WebsiteBucket'].OutputValue" \
+            --output text)
+          
+          # Create bucket policy
+          cat > bucket-policy.json << EOF
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Sid": "PublicReadGetObject",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::${BUCKET}/*"
+              }
+            ]
+          }
+          EOF
+          
+          # Apply the policy
+          aws s3api put-bucket-policy --bucket $BUCKET --policy file://bucket-policy.json
+      
       - name: Upload Website
         run: |
           BUCKET=$(aws cloudformation describe-stacks \
