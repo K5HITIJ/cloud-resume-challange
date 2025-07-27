@@ -10,6 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -17,12 +22,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       
-      - name: Deploy Infrastructure
+      - name: Install SAM CLI
         run: |
-          aws cloudformation deploy \
-            --template-file template.yaml \
-            --stack-name cloud-resume \
-            --capabilities CAPABILITY_IAM
+          pip install aws-sam-cli
+      
+      - name: Build and Deploy Infrastructure
+        run: |
+          sam build
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name cloud-resume --capabilities CAPABILITY_IAM --region us-east-1 --resolve-s3
       
       - name: Upload Website
         run: |
