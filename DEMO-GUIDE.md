@@ -1,22 +1,22 @@
-# 🎯 Ultra-Simplified Cloud Resume Challenge
+# 🎯 Cloud Resume Challenge - Demo Guide
 
 ## Perfect for Demos & Interviews! 
 
-### 📊 **Ultra-Simple Stats**
+### 📊 **Project Stats**
 - **📁 Total Files**: 5 
 - **📝 Total Lines**: ~120 lines of code
 - **⏱️ Demo Time**: 2 minutes to explain
-- **🚀 Deploy Time**: 5 minutes
+- **🚀 Deploy Time**: 3 minutes
 
 ### 📁 **Project Structure**
 ```
-ultra-simple/
+cloud-resume-challenge/
 ├── .github/workflows/
-│   └── deploy.yml          # 38 lines - Complete CI/CD
-├── template.yaml           # 53 lines - Full AWS infrastructure  
-├── lambda_function.py      # 26 lines - Visitor counter
-├── index.html             # 38 lines - Resume website
-└── README.md              # This documentation
+│   └── deploy.yml          # Clean CI/CD pipeline
+├── template.yaml           # AWS infrastructure  
+├── lambda_function.py      # Visitor counter backend
+├── index.html             # Resume website
+└── README.md              # Documentation
 ```
 
 ## 🏗️ **Architecture (Explained in 30 seconds)**

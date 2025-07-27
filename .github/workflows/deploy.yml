@@ -1,4 +1,4 @@
-name: Deploy Resume
+name: Deploy Cloud Resume
 
 on:
   push:
@@ -10,70 +10,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Debug Secrets
-        run: |
-          echo "=== SECRET DEBUGGING ==="
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref }}"
-          echo "Event: ${{ github.event_name }}"
-          echo "Actor: ${{ github.actor }}"
-          echo ""
-          echo "Testing direct secret access:"
-          echo "AWS_ACCESS_KEY_ID direct: '${{ secrets.AWS_ACCESS_KEY_ID }}'"
-          echo "AWS_SECRET_ACCESS_KEY direct: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
-          echo ""
-          echo "Testing secret existence:"
-          echo "AWS_ACCESS_KEY_ID exists: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
-          echo "AWS_SECRET_ACCESS_KEY exists: ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
-      
-      - name: Configure AWS CLI
-        run: |
-          echo "Setting up AWS credentials..."
-          echo "Access Key ID: ${AWS_ACCESS_KEY_ID:0:8}..."
-          echo "Secret Key: ${AWS_SECRET_ACCESS_KEY:0:8}..."
-          
-          # Alternative approach: direct environment variables
-          echo "Using environment variables for AWS CLI"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
-      
-      - name: Test AWS Connection
-        run: |
-          echo "Testing AWS connection..."
-          aws sts get-caller-identity
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       
       - name: Deploy Infrastructure
         run: |
-          echo "Deploying CloudFormation stack..."
           aws cloudformation deploy \
             --template-file template.yaml \
-            --stack-name resume \
+            --stack-name cloud-resume \
             --capabilities CAPABILITY_IAM
+      
+      - name: Upload Website
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name cloud-resume \
+            --query "Stacks[0].Outputs[?OutputKey=='WebsiteBucket'].OutputValue" \
+            --output text)
           
-          echo "Getting stack outputs..."
-          BUCKET=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteBucket'].OutputValue" --output text)
-          API_URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='ApiURL'].OutputValue" --output text)
-          
-          echo "S3 Bucket: $BUCKET"
-          echo "API URL: $API_URL"
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name cloud-resume \
+            --query "Stacks[0].Outputs[?OutputKey=='ApiURL'].OutputValue" \
+            --output text)
           
           # Update HTML with API URL
-          sed "s|API_URL_PLACEHOLDER|$API_URL|g" index.html > /tmp/index.html
-          cp /tmp/index.html index.html
+          sed "s|API_URL_PLACEHOLDER|$API_URL|g" index.html > index_updated.html
           
-          # Upload website
-          aws s3 sync . s3://$BUCKET --exclude "*" --include "*.html" --include "*.css" --include "*.js"
+          # Upload to S3
+          aws s3 cp index_updated.html s3://$BUCKET/index.html
           
-          # Show result
-          URL=$(aws cloudformation describe-stacks --stack-name resume --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" --output text)
-          echo "✅ Website deployed: $URL"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
+          # Get website URL
+          WEBSITE_URL=$(aws cloudformation describe-stacks \
+            --stack-name cloud-resume \
+            --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" \
+            --output text)
+          
+          echo "🎉 Website deployed successfully!"
+          echo "📍 URL: $WEBSITE_URL"

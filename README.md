@@ -1,38 +1,45 @@
-# Cloud Resume Challenge - Ultra Simple
+# ☁️ Cloud Resume Challenge
 
-A serverless resume website with visitor counter. **Perfect for demos!**
+A simple serverless resume website with visitor counter, built using AWS services and automated CI/CD.
 
 ## 🏗️ Architecture
-- **Frontend**: S3 static website
-- **Backend**: Lambda function
-- **Database**: DynamoDB
-- **CI/CD**: GitHub Actions
 
-## 🚀 Deploy in 2 minutes
-1. Fork this repo
-2. Add AWS secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
-3. Push to main branch
-4. Done! ✅
+- **Frontend**: Static HTML website hosted on S3
+- **Backend**: Lambda function with DynamoDB for visitor counting
+- **API**: API Gateway REST endpoint
+- **Infrastructure**: CloudFormation (Infrastructure as Code)
+- **CI/CD**: GitHub Actions for automated deployment
 
-## 📁 Project Structure (4 files total!)
-```
-├── .github/workflows/deploy.yml    # CI/CD (25 lines)
-├── template.yaml                   # Infrastructure (35 lines)
-├── lambda_function.py              # Backend (15 lines)
-├── index.html                      # Frontend (25 lines)
-└── README.md                       # This file
-```
+## 🚀 Features
 
-## ✨ Demo Script for Interviews
-1. "This is a serverless resume with real-time visitor tracking"
-2. "GitHub Actions automatically deploys to AWS when I push code"
-3. "Infrastructure is defined as code using CloudFormation"
-4. "The visitor counter uses Lambda and DynamoDB"
-5. "Total: 4 files, 100 lines of code, full CI/CD pipeline"
+- ✅ Responsive resume website
+- ✅ Real-time visitor counter
+- ✅ Serverless architecture
+- ✅ Automated deployments
+- ✅ Infrastructure as Code
 
-Perfect for showcasing cloud and DevOps skills! 🎯
+## 🔧 Setup
 
-# Test deployment
-# Testing AWS credentials
+1. **Configure AWS Credentials**
+   - Add `AWS_ACCESS_KEY_ID` to GitHub repository secrets
+   - Add `AWS_SECRET_ACCESS_KEY` to GitHub repository secrets
 
+2. **Deploy**
+   - Push to `main` branch
+   - GitHub Actions automatically deploys to AWS
+   - Website URL will be displayed in the action logs
 
+## 📁 Files
+
+- `index.html` - Resume website
+- `lambda_function.py` - Visitor counter backend
+- `template.yaml` - AWS CloudFormation template
+- `.github/workflows/deploy.yml` - CI/CD pipeline
+
+## 🌐 Live Demo
+
+Your website will be automatically deployed to: `http://cloud-resume-{account-id}.s3-website-us-east-1.amazonaws.com`
+
+---
+
+**Built for the Cloud Resume Challenge** 🎯
